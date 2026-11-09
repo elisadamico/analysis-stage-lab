@@ -8,7 +8,7 @@ The lab uses the replication data from D'Amico, "Difference-in-Differences Estim
 
 ## Running it in RStudio or Posit Cloud instead
 
-1. Download `lab.R` and the `data` folder (green **Code** button, then **Download ZIP**), or in Posit Cloud choose **New Project → New Project from Git Repository** and paste this page's address.
+1. Download `lab.R` (or use **Download script** in the browser lab to keep your answers). It reads the data from this repository, so you only need an internet connection. In Posit Cloud you can also choose **New Project → New Project from Git Repository** and paste this page's address.
 2. Install the packages once. The lab needs version 2.3.0 of `did`, because newer versions refuse this panel (some grid-cell years appear twice):
    ```r
    install.packages(c("ggplot2", "BMisc", "DRDID", "pbapply", "fastglm", "dreamerr"))
