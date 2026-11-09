@@ -20,6 +20,8 @@
            padding: 7px 12px; font: inherit; font-size: 14px; cursor: pointer; }
   button:hover:not(:disabled) { border-color: var(--cyan); }
   button.primary { border-color: var(--cyan); color: var(--cyan); }
+  a.feedback { border: 1px solid var(--pink); color: var(--pink); border-radius: 4px; padding: 7px 12px; font-size: 14px; text-decoration: none; }
+  a.feedback:hover { background: var(--pink); color: var(--bg); }
   button:disabled { opacity: .45; cursor: default; }
   #saved { font-size: 12px; color: var(--muted); }
   #status { margin-left: auto; font-size: 13px; color: var(--pink); }
@@ -88,6 +90,7 @@
   <button id="clear">Clear console</button>
   <button id="saveScript">Download script</button>
   <button id="saveConsole">Download console</button>
+  <a class="feedback" href="https://docs.google.com/forms/d/e/1FAIpQLSdnv_2-59uCcJANiYm6V0aKmLC5sP3Fg4HR9Dl7oUeG3kxlEA/viewform" target="_blank" rel="noopener">Give feedback (anonymous)</a>
   <span id="saved"></span>
   <span id="status">Starting R… the first time takes about a minute while packages download</span>
 </div>

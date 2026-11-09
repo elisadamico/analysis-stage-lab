@@ -399,6 +399,13 @@ View(my_results)
 #      ANSWER:
 
 
+# -------------------------------------------------------------
+# Done? Please give feedback (anonymous, about two minutes). Use the
+# "Give feedback" button at the top of the page, or this link:
+# https://docs.google.com/forms/d/e/1FAIpQLSdnv_2-59uCcJANiYm6V0aKmLC5sP3Fg4HR9Dl7oUeG3kxlEA/viewform
+# -------------------------------------------------------------
+
+
 # =============================================================
 # AFTER CLASS: using this on your own data
 # =============================================================
