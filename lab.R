@@ -10,16 +10,36 @@
 # hydropower dam (75 MW or more)?
 #
 # How to use this script
-#   Run it one line at a time: Ctrl + Enter (Windows) or
-#   Cmd + Enter (Mac). Work in pairs for Steps 0 to 5 (one laptop
-#   between two is fine) and answer the QUESTIONS together. Step 6
-#   is about your own thesis, so do it on your own.
-#   Type your answers after each "# ANSWER:" line.
-#   Keep the # at the start, so R treats your answer as a note.
-#   Download your script at the end to keep your notes.
+#   Put your cursor on a line and press Ctrl + Enter (Windows) or
+#   Cmd + Enter (Mac) to run it. Go in order, from the top: R only
+#   knows what you have already run.
+#   Lines that start with # are notes for you. R skips them.
+#
+#   Work in pairs for Steps 0 to 5 (one laptop between two is fine).
+#   If one of you has coded before and the other has not, the one
+#   who has NOT coded types, and the other helps. Step 6 is about
+#   your own thesis, so do it on your own.
+#
+#   Type your answers after each "# ANSWER:" line. Keep the # at the
+#   start, so R treats your answer as a note. Download your script
+#   at the end to keep your answers.
 #
 #   %>% is the "pipe". Read it as "and then": take the data, and
 #   then filter it, and then count it...
+#
+# Words you will see
+#   treated / treatment   a cell that gets a dam, from that year on
+#   not yet treated       cells that get a dam LATER (the comparison)
+#   never treated         cells that never get a dam
+#   ATT                   the average effect of the dam on treated
+#                         cells: the main number you are after
+#   SE, 95% interval      how uncertain the ATT is. If the interval
+#                         includes zero, we cannot rule out no effect
+#   anticipation          letting effects start before the dam opens
+#                         (for example, during construction)
+#   parallel trends       the assumption that, without dams, treated
+#                         and comparison cells would have moved together
+#   event study           the effect year by year, before and after
 # =============================================================
 
 library(did)       # the Callaway and Sant'Anna estimator used in the paper
@@ -73,9 +93,9 @@ data %>% count(country)                      # rows per country
 
 # Each cell should appear once per year. Does it?
 data %>%
-  count(hex_id, year) %>%
-  filter(n > 1) %>%
-  nrow()
+  count(hex_id, year) %>%     # how many rows each cell has per year
+  filter(n > 1) %>%           # keep only the ones with more than one
+  nrow()                      # and count them
 
 # QUESTIONS
 #  0a. Some cell-years appear more than once (cells on a border
@@ -103,7 +123,8 @@ first_dam <- dams %>%
 
 data <- data %>%
   left_join(first_dam, by = "hex_id") %>%      # merge back onto the panel
-  mutate(first_treated = coalesce(first_treated, 0))   # no dam = 0
+  mutate(first_treated = coalesce(first_treated, 0))   # cells with no dam are
+                                                        # blank (NA): make them 0
 
 # How many cells in each country ever get a dam?
 data %>%
@@ -137,8 +158,8 @@ group_time <- att_gt(
   data = ph,
   control_group = "notyettreated",  # compare with cells not yet treated
   anticipation = 1,                 # effects may start a year early
-  bstrap = TRUE,                    # wild bootstrap
-  panel = FALSE
+  bstrap = TRUE,                    # a way to estimate uncertainty
+  panel = FALSE                     # needed because some cell-years repeat (Step 0)
 )
 
 event_study <- aggte(group_time, type = "dynamic", na.rm = TRUE)
@@ -218,6 +239,11 @@ explore("Philippines", treatment = "first_disaster")
 # Fill in YOUR choices, then run the lines below them. This is the
 # same model as Step 2, with your settings plugged in.
 # Before you run it, write down what you expect.
+#
+# To change a setting, edit the text (for example "Colombia" to
+# "Mali"), then run EVERY line from my_country down to save_run
+# again. Running only the line you edited is not enough. Tip: put
+# your cursor anywhere in this step and click "Run this step".
 my_country      <- "Colombia"         # any of the 8 countries
 my_outcome      <- "conflict_events"  # "conflict_events", "civilian_deaths", "total_deaths"
 my_control      <- "notyettreated"    # "notyettreated" or "nevertreated"
@@ -275,6 +301,9 @@ View(my_results)
 # =============================================================
 # No code is given. Use explore(), run_did(), View(data), dplyr, and
 # anything else you like. Write what you did and what you found.
+# Tip: copy an explore() or run_did() line from above, paste it
+# under "Your code", and change one thing. That is how most coding
+# starts.
 #
 #  A. Fragile or solid? Find the country whose result changes most
 #     under ONE defensible choice. What is that choice?
