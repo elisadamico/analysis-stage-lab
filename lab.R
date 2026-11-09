@@ -28,10 +28,12 @@ library(ggplot2)   # for plots
 # -------------------------------------------------------------
 # One row per hexagonal grid cell (about 140 km across) per year,
 # 1989 to 2024, for the 8 countries analysed in the paper.
-data_url <- "https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/hydropower_conflict.csv"
-if (file.exists("data/hydropower_conflict.csv")) data_url <- "data/hydropower_conflict.csv"
-d <- read.csv(data_url)
-d[] <- lapply(d, function(v) if (is.integer(v)) as.numeric(v) else v)  # did needs numbers, not integers
+d <- read.csv("data/hydropower_conflict.csv")
+
+# The did package needs the treatment years stored as decimal
+# numbers, not whole-number integers. These two lines convert them.
+d$first_treated  <- as.numeric(d$first_treated)
+d$first_disaster <- as.numeric(d$first_disaster)
 
 # To see the data as a table, click the DATA tab in the bottom-right
 # pane (or run View(d) in Step 0). In RStudio, View(d) opens it in a new tab.
@@ -113,8 +115,9 @@ ggdid(es)                                         # the event-study plot
 # Tools for the rest of the lab
 # =============================================================
 # Run this block once (put your cursor on "explore <- function"
-# and press Ctrl/Cmd + Enter, then do the same for run_did). You do
-# not need to read it closely. From here on, YOU make the choices.
+# and press Ctrl/Cmd + Enter, then do the same for save_run and
+# run_did). You do not need to read it closely. From here on, YOU
+# make the choices.
 
 # explore() shows you a country before you estimate anything:
 # how many cells get a dam, when, and what conflict looked like
@@ -146,9 +149,26 @@ explore <- function(country, outcome = "conflict_events", treatment = "first_tre
   invisible(x)
 }
 
-# run_did() runs the paper's estimator with whatever choices you
-# give it, and adds a row to my_results so you can compare runs.
+# save_run() prints a one-line summary of a result and adds it to
+# my_results, so you can compare your runs side by side.
 my_results <- data.frame()
+save_run <- function(es) {
+  lo <- es$overall.att - 1.96 * es$overall.se; hi <- es$overall.att + 1.96 * es$overall.se
+  cat(sprintf("\n%s | %s | control: %s | anticipation: %d\n", my_country, my_outcome,
+              my_control, my_anticipation))
+  cat(sprintf("Overall ATT %+.3f  (SE %.3f, 95%% interval %+.3f to %+.3f)%s\n",
+              es$overall.att, es$overall.se, lo, hi,
+              if (lo > 0 | hi < 0) "  <- interval excludes zero" else ""))
+  my_results <<- rbind(my_results, data.frame(
+    country = my_country, outcome = my_outcome, treatment = "first_treated",
+    control = my_control, anticipation = my_anticipation, years = "1989-2024",
+    ATT = round(es$overall.att, 3), SE = round(es$overall.se, 3),
+    excludes_zero = lo > 0 | hi < 0))
+}
+
+# run_did() does everything Step 3 does in one line: picks the
+# country (and, if you like, years), runs att_gt() and aggte(),
+# saves the run and draws the plot. Handy for the Step 4 challenges.
 run_did <- function(country, outcome = "conflict_events", control = "notyettreated",
                     anticipation = 1, first_year = 1989, last_year = 2024, plot = TRUE,
                     treatment = "first_treated") {
@@ -206,18 +226,32 @@ explore("Colombia", outcome = "civilian_deaths")
 # =============================================================
 # STEP 3. Your analysis
 # =============================================================
-# Fill in YOUR choices, then run the run_did() line below.
+# Fill in YOUR choices, then run the lines below them. This is the
+# same model as Step 1, with your settings plugged in.
 # Before you run it, write down what you expect.
 my_country      <- "Colombia"         # any of the 8 countries
 my_outcome      <- "conflict_events"  # "conflict_events", "civilian_deaths", "total_deaths"
 my_control      <- "notyettreated"    # "notyettreated" or "nevertreated"
 my_anticipation <- 1                  # 0 = no early effects, 1 = from a year before
-my_first_year   <- 1989               # earliest is 1989
-my_last_year    <- 2024               # latest is 2024
 
-run_did(my_country, outcome = my_outcome, control = my_control,
-        anticipation = my_anticipation,
-        first_year = my_first_year, last_year = my_last_year)
+x <- d[d$country == my_country, ]     # keep only your country
+
+set.seed(1)
+gt <- att_gt(
+  yname = my_outcome,
+  tname = "year",
+  idname = "hex_id",
+  gname = "first_treated",
+  data = x,
+  control_group = my_control,
+  anticipation = my_anticipation,
+  bstrap = TRUE,
+  panel = FALSE
+)
+es <- aggte(gt, type = "dynamic", na.rm = TRUE)
+es
+ggdid(es)
+save_run(es)                          # adds this run to my_results
 
 # Now change ONE setting above, predict, and run again. Do this at
 # least three times. Every run is saved in my_results:
@@ -329,7 +363,7 @@ View(my_results)
 # names(first)[2] <- "first_treated"
 # mydata <- merge(mydata, first, by = "UNIT", all.x = TRUE)
 # mydata$first_treated[is.na(mydata$first_treated)] <- 0
-# mydata[] <- lapply(mydata, function(v) if (is.integer(v)) as.numeric(v) else v)
+# mydata$first_treated <- as.numeric(mydata$first_treated)
 #
 # 2. Estimate (the same model as Step 1):
 # gt <- att_gt(yname = "OUTCOME", tname = "YEAR", idname = "UNIT",
