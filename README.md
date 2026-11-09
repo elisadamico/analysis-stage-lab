@@ -1,0 +1,36 @@
+# The analysis stage: a difference-in-differences lab
+
+Lab for the POL30860 Advanced Seminar in Politics, University College Dublin (Week 10, 10 November 2026).
+
+**Run it in your browser, no install or account needed:** [www.elisadamico.net/analysis-stage-lab](https://www.elisadamico.net/analysis-stage-lab/)
+
+The lab uses the replication data from D'Amico, "Difference-in-Differences Estimation: A Quasi-Experimental Approach to Sustainable Development Interventions", *Global Environmental Politics*. It asks what happens to conflict in places that get a large hydropower dam, using the Callaway and Sant'Anna estimator from the paper.
+
+## Running it in RStudio or Posit Cloud instead
+
+1. Download `lab.R` and the `data` folder (green **Code** button, then **Download ZIP**), or in Posit Cloud choose **New Project → New Project from Git Repository** and paste this page's address.
+2. Install the packages once. The lab needs version 2.3.0 of `did`, because newer versions refuse this panel (some grid-cell years appear twice):
+   ```r
+   install.packages(c("ggplot2", "BMisc", "DRDID", "pbapply", "fastglm", "dreamerr"))
+   install.packages("https://cran.r-project.org/src/contrib/Archive/did/did_2.3.0.tar.gz",
+                    repos = NULL, type = "source")
+   ```
+3. Open `lab.R` and run it one line at a time (Ctrl + Enter on Windows, Cmd + Enter on Mac).
+
+## Files
+
+| File | What it is |
+|---|---|
+| `lab.R` | The lab script, in steps, with questions |
+| `data/hydropower_conflict.csv` | One row per grid cell per year, 1989–2024, for the 8 countries in the paper |
+| `index.html` | The in-browser version (R runs in your browser through webR) |
+| `stub/` | A small stand-in for the `bigmemory` package, which has no browser build and is not used by this lab |
+
+## Data and credit
+
+- Paper replication data: Harvard Dataverse, [doi:10.7910/DVN/FGCPNU](https://doi.org/10.7910/DVN/FGCPNU)
+- Conflict: [UCDP Georeferenced Event Dataset](https://ucdp.uu.se/), Uppsala Conflict Data Program
+- Hydropower: [Global Hydropower Tracker](https://globalenergymonitor.org/projects/global-hydropower-tracker/), Global Energy Monitor
+- `first_disaster` (Challenge E only): year a grid cell was first hit by a climate disaster with coordinates in [EM-DAT](https://www.emdat.be/) (CRED, UCLouvain), 2001–2020
+- Estimator: Callaway and Sant'Anna (2021), R package [did](https://bcallaway11.github.io/did/)
+- R in the browser: [webR](https://docs.r-wasm.org/webr/latest/)

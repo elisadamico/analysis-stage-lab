@@ -1,0 +1,8 @@
+Package: bigmemory
+Version: 99.0.0
+Title: Stand-in for bigmemory in the browser (not used by this lab)
+Description: Minimal stand-in so that fastglm and did can load in webR. The real
+  bigmemory package has no browser build. These functions are never called here.
+License: MIT
+Encoding: UTF-8
+Built: R 4.6.1; ; 2026-11-09 17:50:14 UTC; unix

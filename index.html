@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis Stage Lab</title>
+<meta name="description" content="Run a difference-in-differences analysis in R in your browser. No account or install needed.">
+<style>
+  :root { --bg:#000; --panel:#141414; --ink:#e8e8e8; --muted:#8a8a8a; --cyan:#00ffff; --pink:#ff69b4; --rule:#333; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif; display: flex; flex-direction: column; }
+  header { padding: 16px 20px 8px; }
+  h1 { margin: 0; font-size: 24px; }
+  .bar { width: 120px; height: 4px; margin-top: 6px; background: linear-gradient(90deg, var(--cyan), var(--pink)); }
+  .sub { color: var(--muted); margin: 8px 0 0; font-size: 14px; line-height: 1.5; }
+  .toolbar { display: flex; gap: 8px; align-items: center; padding: 8px 20px; flex-wrap: wrap; }
+  button { background: var(--panel); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
+           padding: 7px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--cyan); }
+  button.primary { border-color: var(--cyan); color: var(--cyan); }
+  button:disabled { opacity: .45; cursor: default; }
+  #saved { font-size: 12px; color: var(--muted); }
+  #status { margin-left: auto; font-size: 13px; color: var(--pink); }
+  #status.ready { color: var(--cyan); }
+  main { flex: 1; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 12px; padding: 0 20px 16px; min-height: 0; }
+  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
+  .pane { background: var(--panel); border-radius: 6px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .pane h2 { margin: 0; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--muted);
+             border-bottom: 1px solid var(--rule); letter-spacing: .04em; text-transform: uppercase; }
+  .pane h2 span { color: var(--cyan); text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .edwrap { flex: 1; position: relative; min-height: 420px; background: #0b0b0b; overflow: hidden; }
+  #editor, #hl { position: absolute; inset: 0; margin: 0; padding: 12px; border: 0; width: 100%; height: 100%;
+                 font: 13px/1.5 Menlo, Consolas, "Courier New", monospace; tab-size: 2; white-space: pre;
+                 overflow: auto; letter-spacing: 0; word-spacing: 0; }
+  #hl { pointer-events: none; color: #e8e8e8; }
+  #editor { resize: none; outline: none; background: transparent; color: transparent; caret-color: #ffffff; }
+  #editor::selection { background: rgba(0,255,255,.25); color: transparent; }
+  /* syntax colours in the paper palette: cyan, pink, purple */
+  .tk-com { color: #7a7a7a; font-style: italic; }
+  .tk-str { color: #ff69b4; }
+  .tk-num { color: #c58cff; }
+  .tk-kw  { color: #c58cff; }
+  .tk-fn  { color: #00ffff; }
+  .tk-arg { color: #9fe8f0; }
+  .tk-op  { color: #b0b0b0; }
+  .right { display: grid; grid-template-rows: minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; min-height: 0; }
+  #console { flex: 1; overflow: auto; margin: 0; padding: 10px 12px; font: 12.5px/1.45 Menlo, Consolas, monospace;
+             white-space: pre-wrap; min-height: 220px; }
+  #console .in { color: #e8e8e8; } #console .prompt { color: #7a7a7a; } #console .err { color: var(--pink); } #console .note { color: var(--muted); }
+  .tabs { display: flex; border-bottom: 1px solid var(--rule); }
+  .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 8px 14px;
+                 font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .tabs button.on { color: var(--cyan); box-shadow: inset 0 -2px 0 var(--cyan); }
+  #plots { flex: 1; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-height: 180px; }
+  #plots .empty { color: var(--muted); font-size: 13px; }
+  .plot { display: flex; flex-direction: column; gap: 4px; }
+  .plot canvas { background: #fff; border-radius: 4px; max-width: 100%; }
+  .plot a { font-size: 12px; }
+  #dataPane { flex: 1; display: none; flex-direction: column; min-height: 180px; overflow: hidden; }
+  #dataBar { display: flex; gap: 8px; align-items: center; padding: 8px 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  #dataBar select { background: #000; color: var(--ink); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; font: inherit; }
+  #dataWrap { flex: 1; overflow: auto; }
+  #dataTable { border-collapse: collapse; font: 12px Menlo, Consolas, monospace; }
+  #dataTable th, #dataTable td { padding: 3px 8px; border-bottom: 1px solid #222; white-space: nowrap; text-align: right; }
+  #dataTable th { position: sticky; top: 0; background: #1d1d1d; color: var(--cyan); text-align: left; }
+  #dataTable td.na { color: #555; } #dataTable td.rn { color: var(--muted); }
+  footer { padding: 0 20px 16px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+  a { color: var(--cyan); }
+  kbd { border: 1px solid var(--rule); border-radius: 3px; padding: 0 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Analysis Stage Lab</h1>
+  <div class="bar"></div>
+  <p class="sub">Real R, running in your browser, with no account or install. Put your cursor on a line and press
+  <kbd>Ctrl</kbd>+<kbd>Enter</kbd> (Windows) or <kbd>Cmd</kbd>+<kbd>Enter</kbd> (Mac), like in RStudio. Answer the questions as comments,
+  then click <b>Download script</b> to keep your work.</p>
+</header>
+
+<div class="toolbar">
+  <button id="runLine" class="primary" disabled>Run line ▸</button>
+  <button id="runStep" disabled>Run this step</button>
+  <button id="stop" disabled title="Restart R if something takes too long">Restart R</button>
+  <button id="reset" disabled>Reset script</button>
+  <button id="clear">Clear console</button>
+  <button id="saveScript">Download script</button>
+  <button id="saveConsole">Download console</button>
+  <span id="saved"></span>
+  <span id="status">Starting R… the first time takes about a minute while packages download</span>
+</div>
+
+<main>
+  <section class="pane">
+    <h2>Script <span>lab.R</span></h2>
+    <div class="edwrap"><pre id="hl" aria-hidden="true"></pre><textarea id="editor" spellcheck="false" aria-label="R script"></textarea></div>
+  </section>
+  <div class="right">
+    <section class="pane"><h2>Console</h2><pre id="console"></pre></section>
+    <section class="pane">
+      <div class="tabs"><button id="tabPlots" class="on">Plots</button><button id="tabData">Data</button></div>
+      <div id="plots"><span class="empty">Plots appear here.</span></div>
+      <div id="dataPane">
+        <div id="dataBar">View <select id="dataPick"><option value="">(run some code first)</option></select> <span id="dataInfo"></span></div>
+        <div id="dataWrap"><table id="dataTable"></table></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  Prefer RStudio or Posit Cloud? The same script and data are on GitHub: <a href="https://github.com/elisadamico/analysis-stage-lab">github.com/elisadamico/analysis-stage-lab</a>.
+  Paper: D'Amico, E. "Difference-in-Differences Estimation: A Quasi-Experimental Approach to Sustainable Development Interventions", <i>Global Environmental Politics</i>.
+  Replication data: <a href="https://doi.org/10.7910/DVN/FGCPNU">Harvard Dataverse</a>.
+  Data sources: <a href="https://ucdp.uu.se/">UCDP Georeferenced Event Dataset</a> and the <a href="https://globalenergymonitor.org/projects/global-hydropower-tracker/">Global Hydropower Tracker</a> (Global Energy Monitor).
+  Estimator: Callaway and Sant'Anna (2021), R package <a href="https://bcallaway11.github.io/did/">did</a>. R in the browser by <a href="https://docs.r-wasm.org/webr/latest/">webR</a>.
+</footer>
+
+<script type="module">
+import { WebR } from "https://webr.r-wasm.org/v0.5.4/webr.mjs";
+
+const $ = id => document.getElementById(id);
+const ed = $("editor"), out = $("console"), plots = $("plots"), hl = $("hl");
+
+// ---------- R syntax highlighting (RStudio-style) ----------
+const KW = new Set(["function","if","else","for","while","repeat","in","next","break","return",
+                    "TRUE","FALSE","NULL","NA","NA_integer_","NA_real_","NA_character_","Inf","NaN","library","require"]);
+const escH = t => t.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+function highlight(code) {
+  const re = /(#[^\n]*)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?(?:[eE][-+]?\d+)?L?\b)|([A-Za-z.][A-Za-z0-9._]*)(\s*\()?|(<-|->|<<-|%[^%\n]*%|\|>|[=+\-*\/^$@~!&|<>:]+)/g;
+  let html = "", last = 0, m;
+  while ((m = re.exec(code))) {
+    html += escH(code.slice(last, m.index)); last = re.lastIndex;
+    if (m[1] !== undefined) html += `<span class="tk-com">${escH(m[1])}</span>`;
+    else if (m[2] !== undefined) html += `<span class="tk-str">${escH(m[2])}</span>`;
+    else if (m[3] !== undefined) html += `<span class="tk-num">${m[3]}</span>`;
+    else if (m[4] !== undefined) {
+      const w = m[4], paren = m[5] || "";
+      const after = code.slice(re.lastIndex).match(/^\s*=(?!=)/);
+      const cls = KW.has(w) ? "tk-kw" : paren ? "tk-fn" : after ? "tk-arg" : "";
+      html += (cls ? `<span class="${cls}">${escH(w)}</span>` : escH(w)) + escH(paren);
+    }
+    else if (m[6] !== undefined) html += `<span class="tk-op">${escH(m[6])}</span>`;
+  }
+  return html + escH(code.slice(last)) + "\n";
+}
+function syncHL() { hl.innerHTML = highlight(ed.value); hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; }
+ed.addEventListener("input", syncHL);
+ed.addEventListener("scroll", () => { hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; });
+const KEY = "analysis-stage-lab-gep-v2";
+let original = "", webR, busy = false;
+
+function print(text, cls) {
+  const span = document.createElement("span");
+  if (cls) span.className = cls;
+  span.textContent = text.endsWith("\n") ? text : text + "\n";
+  out.appendChild(span); out.scrollTop = out.scrollHeight;
+}
+function setBusy(b, msg) {
+  busy = b;
+  ["runLine", "runStep", "reset"].forEach(id => $(id).disabled = b);
+  $("stop").disabled = !b;
+  $("status").textContent = msg || (b ? "Running… (bigger countries can take up to a minute)" : "R is ready");
+  $("status").classList.toggle("ready", !b);
+}
+
+// ---------- running code ----------
+async function commands(code) {
+  await webR.objs.globalEnv.bind(".chunk", code);
+  const v = await (await webR.evalR(`local({
+    p <- tryCatch(parse(text = .chunk, keep.source = TRUE), error = function(e) NULL)
+    if (is.null(p)) character(0) else
+      vapply(attr(p, "srcref"), function(s) paste(as.character(s), collapse = "\\n"), "")
+  })`)).toArray();
+  return v.length ? v : [code];
+}
+async function run(code) {
+  if (!code.trim()) return;
+  for (const cmd of await commands(code)) {
+    await runOne(cmd);
+    const v = cmd.match(/^\s*View\(\s*([A-Za-z.][A-Za-z0-9._]*)/);
+    if (v) { await refreshData(v[1]); showTab("data"); }
+  }
+  await refreshData();
+}
+async function runOne(code) {
+  code.replace(/\n+$/, "").split("\n").forEach((l, i) => {
+    const span = document.createElement("span"); span.className = "in";
+    span.innerHTML = `<span class="prompt">${i ? "+ " : "&gt; "}</span>` + highlight(l);
+    out.appendChild(span);
+  });
+  out.scrollTop = out.scrollHeight;
+  const shelter = await new webR.Shelter();
+  try {
+    const res = await shelter.captureR(code, { withAutoprint: true, captureStreams: true, captureConditions: false,
+                                               captureGraphics: { width: 620, height: 400 } });
+    res.output.forEach(o => print(o.data, o.type === "stderr" ? "err" : ""));
+    if (res.images.length) {
+      plots.querySelector(".empty")?.remove(); showTab("plots");
+      res.images.forEach(img => {
+        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+        c.getContext("2d").drawImage(img, 0, 0);
+        const box = document.createElement("div"); box.className = "plot";
+        const a = document.createElement("a"); a.href = "#"; a.textContent = "Download this plot (PNG)";
+        a.onclick = e => { e.preventDefault(); c.toBlob(b => saveBlob(b, `plot-${stamp()}.png`)); };
+        box.append(c, a); plots.prepend(box);
+      });
+    }
+  } catch (e) { print("Error: " + (e.message || e), "err"); }
+  finally { await shelter.purge(); }
+}
+async function complete(code) {
+  await webR.objs.globalEnv.bind(".chunk", code);
+  return await webR.evalRBoolean('!inherits(try(parse(text = .chunk), silent = TRUE), "try-error")');
+}
+const lines = () => ed.value.split("\n");
+const lineAt = pos => ed.value.slice(0, pos).split("\n").length - 1;
+function posOfLine(n) { const L = lines(); let p = 0; for (let i = 0; i < n && i < L.length; i++) p += L[i].length + 1; return p; }
+const isCode = l => l.trim() !== "" && !l.trim().startsWith("#");
+
+async function runLineOrSelection() {
+  if (busy) return; setBusy(true);
+  try {
+    if (ed.selectionStart !== ed.selectionEnd) { await run(ed.value.slice(ed.selectionStart, ed.selectionEnd)); return; }
+    const L = lines(); let i = lineAt(ed.selectionStart);
+    while (i < L.length && !isCode(L[i])) i++;
+    if (i >= L.length) return;
+    let j = i, chunk = L[i];
+    while (!(await complete(chunk)) && j < L.length - 1) { j++; chunk += "\n" + L[j]; }
+    await run(chunk);
+    let k = j + 1; while (k < L.length && !isCode(L[k])) k++;
+    const p = posOfLine(Math.min(k, L.length - 1)); ed.focus(); ed.setSelectionRange(p, p);
+    ed.scrollTop = Math.max(0, (Math.min(k, L.length - 1) - 6) * parseFloat(getComputedStyle(ed).lineHeight));
+  } finally { setBusy(false); }
+}
+async function runStep() {
+  if (busy) return;
+  const L = lines(), here = lineAt(ed.selectionStart), head = l => /^#\s*STEP\s/.test(l);
+  let a = here; while (a > 0 && !head(L[a])) a--;
+  let b = here + 1; while (b < L.length && !head(L[b])) b++;
+  setBusy(true); try { await run(L.slice(a, b).join("\n")); } finally { setBusy(false); }
+}
+
+// ---------- data viewer ----------
+const MAXROWS = 500;
+function showTab(w) {
+  $("tabPlots").classList.toggle("on", w === "plots"); $("tabData").classList.toggle("on", w === "data");
+  plots.style.display = w === "plots" ? "flex" : "none"; $("dataPane").style.display = w === "data" ? "flex" : "none";
+}
+$("tabPlots").onclick = () => showTab("plots"); $("tabData").onclick = () => showTab("data");
+$("dataPick").onchange = () => drawTable($("dataPick").value);
+const rText = async code => (await (await webR.evalR(code)).toArray());
+async function refreshData(pick) {
+  const info = await rText(`local({ e <- globalenv(); n <- ls(e)
+    n <- n[vapply(n, function(x) is.data.frame(get(x, envir = e)), TRUE)]
+    if (!length(n)) character(0) else vapply(n, function(x) paste0(x, "|", nrow(get(x, envir = e)), "|", ncol(get(x, envir = e))), "") })`);
+  if (!info.length) return;
+  const sel = $("dataPick"), keep = pick || sel.value;
+  sel.innerHTML = info.map(s => { const [n, r, c] = s.split("|"); return `<option value="${n}">${n} (${Number(r).toLocaleString()} rows, ${c} columns)</option>`; }).join("");
+  const names = info.map(s => s.split("|")[0]); sel.value = names.includes(keep) ? keep : names[0];
+  if (pick || $("dataTable").dataset.shown !== sel.value) await drawTable(sel.value);
+}
+async function drawTable(name) {
+  if (!name) return;
+  await webR.objs.globalEnv.bind(".view_name", name);
+  const v = await rText(`local({ x <- get(.view_name, envir = globalenv()); h <- head(x, ${MAXROWS})
+    f <- format(h, trim = TRUE); f[is.na(h)] <- "NA"
+    c(paste(c("", names(h)), collapse = "\\t"), paste(rownames(h), apply(f, 1, paste, collapse = "\\t"), sep = "\\t"), as.character(nrow(x))) })`);
+  const total = Number(v.pop()), [head, ...body] = v;
+  const esc = t => t.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  $("dataTable").innerHTML = "<thead><tr>" + head.split("\t").map(h => `<th>${esc(h)}</th>`).join("") + "</tr></thead><tbody>" +
+    body.map(r => "<tr>" + r.split("\t").map((c, i) => `<td class="${i === 0 ? "rn" : c === "NA" ? "na" : ""}">${esc(c)}</td>`).join("") + "</tr>").join("") + "</tbody>";
+  $("dataTable").dataset.shown = name;
+  $("dataInfo").textContent = total > MAXROWS ? `showing the first ${MAXROWS} of ${total.toLocaleString()} rows` : `${total.toLocaleString()} rows`;
+}
+
+// ---------- saving ----------
+const stamp = () => new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+function saveBlob(blob, name) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+$("saveScript").onclick = () => saveBlob(new Blob([ed.value], { type: "text/plain" }), `my-lab-${stamp()}.R`);
+$("saveConsole").onclick = () => saveBlob(new Blob([out.innerText], { type: "text/plain" }), `my-lab-output-${stamp()}.txt`);
+let saveTimer;
+ed.addEventListener("input", () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => {
+  try { localStorage.setItem(KEY, ed.value); $("saved").textContent = "Saved in this browser"; } catch (e) {} }, 600); });
+ed.addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); runLineOrSelection(); return; }
+  // pressing Enter inside a comment keeps the next line a comment, so answers never break the code
+  if (e.key === "Enter" && !e.shiftKey && ed.selectionStart === ed.selectionEnd) {
+    const start = ed.value.lastIndexOf("\n", ed.selectionStart - 1) + 1;
+    const line = ed.value.slice(start, ed.selectionStart);
+    if (/^\s*#/.test(line)) {
+      e.preventDefault();
+      const lead = line.match(/^\s*#\s*/)[0].replace(/\S/g, c => c);   // keep the same indent
+      ed.setRangeText("\n" + (/ANSWER:/.test(line) ? "#      " : lead), ed.selectionStart, ed.selectionEnd, "end");
+      ed.dispatchEvent(new Event("input"));
+    }
+  }
+  if (e.key === "Tab") { e.preventDefault(); ed.setRangeText("  ", ed.selectionStart, ed.selectionEnd, "end"); syncHL(); }
+});
+$("runLine").onclick = runLineOrSelection; $("runStep").onclick = runStep;
+$("clear").onclick = () => { out.textContent = ""; };
+$("reset").onclick = () => {
+  if (!confirm("Put the script back to how it started? Your edits and answers will be lost. Download your script first if you want to keep it.")) return;
+  ed.value = original; syncHL(); try { localStorage.removeItem(KEY); } catch (e) {} $("saved").textContent = "";
+};
+$("stop").onclick = () => { if (confirm("Restart R? Objects you created will be lost, but your script stays.")) location.reload(); };
+
+// ---------- start-up ----------
+async function writeFile(path, url) {
+  const parts = path.split("/"); let dir = "";
+  for (const p of parts.slice(1, -1)) { dir += "/" + p; try { await webR.FS.mkdir(dir); } catch (e) {} }
+  await webR.FS.writeFile(path, new Uint8Array(await (await fetch(url)).arrayBuffer()));
+}
+(async () => {
+  try {
+    original = await (await fetch("lab.R")).text();
+    let kept = null; try { kept = localStorage.getItem(KEY); } catch (e) {}
+    ed.value = kept || original; if (kept) $("saved").textContent = "Restored your saved script";
+    syncHL();
+    webR = new WebR(); await webR.init();
+    $("status").textContent = "Installing packages… (about a minute the first time)";
+    // bigmemory has no browser build; a small stand-in lets did load (it is never used here)
+    for (const f of (await (await fetch("stub/files.txt")).text()).trim().split("\n"))
+      await writeFile("/home/web_user/stub/" + f, "stub/" + f);
+    await webR.evalRVoid('.libPaths(c("/home/web_user/stub", .libPaths()))');
+    await webR.installPackages(["did", "ggplot2"], { quiet: true });
+    await writeFile("/home/web_user/data/hydropower_conflict.csv", "data/hydropower_conflict.csv");
+    await webR.evalRVoid('View <- function(x, title) invisible(x)');
+    print("R is ready. Start at the top of the script.", "note");
+    setBusy(false);
+    if (new URLSearchParams(location.search).has("autorun")) { setBusy(true); try { await run(ed.value); } finally { setBusy(false); document.title = "DONE"; } }
+  } catch (e) {
+    $("status").textContent = "R could not start. Try reloading, or use the GitHub version in RStudio.";
+    print(String(e), "err"); document.title = "DONE";
+  }
+})();
+</script>
+</body>
+</html>

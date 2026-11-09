@@ -1,0 +1,1 @@
+export(as.big.matrix, is.big.matrix)
