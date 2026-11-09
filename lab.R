@@ -28,15 +28,15 @@ library(ggplot2)   # for plots
 # -------------------------------------------------------------
 # One row per hexagonal grid cell (about 140 km across) per year,
 # 1989 to 2024, for the 8 countries analysed in the paper.
-d <- read.csv("data/hydropower_conflict.csv")
+data <- read.csv("data/hydropower_conflict.csv")
 
 # The did package needs the treatment years stored as decimal
 # numbers, not whole-number integers. These two lines convert them.
-d$first_treated  <- as.numeric(d$first_treated)
-d$first_disaster <- as.numeric(d$first_disaster)
+data$first_treated  <- as.numeric(data$first_treated)
+data$first_disaster <- as.numeric(data$first_disaster)
 
 # To see the data as a table, click the DATA tab in the bottom-right
-# pane (or run View(d) in Step 0). In RStudio, View(d) opens it in a new tab.
+# pane (or run View(data) in Step 0). In RStudio, View(data) opens it in a new tab.
 #
 # Columns:
 #   country          one of 8 countries
@@ -55,16 +55,16 @@ d$first_disaster <- as.numeric(d$first_disaster)
 # =============================================================
 # STEP 0. Look before you analyse
 # =============================================================
-View(d)
+View(data)
 
-table(d$country)                                    # rows per country
+table(data$country)                                    # rows per country
 
 # How many cells in each country ever get a dam?
-treated <- unique(d[d$first_treated > 0, c("country", "hex_id")])
+treated <- unique(data[data$first_treated > 0, c("country", "hex_id")])
 table(treated$country)
 
 # Each cell should appear once per year. Does it?
-sum(duplicated(d[, c("hex_id", "year")]))
+sum(duplicated(data[, c("hex_id", "year")]))
 
 # QUESTIONS
 #  0a. Which countries have very few treated cells? Why might that
@@ -79,7 +79,7 @@ sum(duplicated(d[, c("hex_id", "year")]))
 # STEP 1. Reproduce a published result
 # =============================================================
 # This is the exact specification from the paper.
-ph <- d[d$country == "Philippines", ]
+ph <- data[data$country == "Philippines", ]
 
 set.seed(1)
 gt <- att_gt(
@@ -123,7 +123,7 @@ ggdid(es)                                         # the event-study plot
 # how many cells get a dam, when, and what conflict looked like
 # over time in cells that get a dam versus cells that never do.
 explore <- function(country, outcome = "conflict_events", treatment = "first_treated") {
-  x <- d[d$country == country, ]
+  x <- data[data$country == country, ]
   x$first_treated <- x[[treatment]]
   what <- if (treatment == "first_treated") "a dam" else "a disaster"
   cells <- unique(x[, c("hex_id", "first_treated")])
@@ -172,7 +172,7 @@ save_run <- function(es) {
 run_did <- function(country, outcome = "conflict_events", control = "notyettreated",
                     anticipation = 1, first_year = 1989, last_year = 2024, plot = TRUE,
                     treatment = "first_treated") {
-  x <- d[d$country == country & d$year >= first_year & d$year <= last_year, ]
+  x <- data[data$country == country & data$year >= first_year & data$year <= last_year, ]
   x$first_treated <- x[[treatment]]
   set.seed(1)
   gt <- att_gt(yname = outcome, tname = "year", idname = "hex_id", gname = "first_treated",
@@ -234,7 +234,7 @@ my_outcome      <- "conflict_events"  # "conflict_events", "civilian_deaths", "t
 my_control      <- "notyettreated"    # "notyettreated" or "nevertreated"
 my_anticipation <- 1                  # 0 = no early effects, 1 = from a year before
 
-x <- d[d$country == my_country, ]     # keep only your country
+x <- data[data$country == my_country, ]     # keep only your country
 
 set.seed(1)
 gt <- att_gt(
@@ -272,7 +272,7 @@ View(my_results)
 # =============================================================
 # STEP 4. Challenge: pick one (or more)
 # =============================================================
-# No code is given. Use explore(), run_did(), View(d), and anything
+# No code is given. Use explore(), run_did(), View(data), and anything
 # else you like. Write what you did and what you found.
 #
 #  A. Fragile or solid? Find the country whose result changes most
