@@ -60,6 +60,7 @@
   #cmdline span { color: var(--cyan); font: 13px Menlo, Consolas, monospace; }
   #cmd { flex: 1; background: transparent; border: 0; outline: none; color: var(--ink); font: 12.5px Menlo, Consolas, monospace; }
   #cmd::placeholder { color: #555; }
+  #console .done { color: var(--cyan); opacity: .75; font-size: 11.5px; }
   #console .in { color: #e8e8e8; } #console .prompt { color: #7a7a7a; } #console .err { color: var(--pink); } #console .note { color: var(--muted); }
   .tabs { display: flex; border-bottom: 1px solid var(--rule); }
   .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 8px 14px;
@@ -198,7 +199,13 @@ function print(text, cls) {
   span.textContent = text.endsWith("\n") ? text : text + "\n";
   out.appendChild(span); out.scrollTop = out.scrollHeight;
 }
+let runStart = null;
 function setBusy(b, msg) {
+  if (b && !busy && !msg) runStart = performance.now();
+  if (!b && busy && runStart !== null) {
+    print(`\u2713 Done (${((performance.now() - runStart) / 1000).toFixed(1)} s)`, "done");
+    runStart = null;
+  }
   busy = b;
   ["runLine", "runStep", "reset"].forEach(id => $(id).disabled = b);
   $("stop").disabled = !b;
