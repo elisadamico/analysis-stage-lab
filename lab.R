@@ -32,15 +32,14 @@ library(ggplot2)   # for plots
 # -------------------------------------------------------------
 # These read the data straight from GitHub, so the script works
 # anywhere with an internet connection (here, Posit Cloud, RStudio).
-url <- "https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/"
 
 # 1. The panel: one row per hexagonal grid cell (about 140 km
 #    across) per year, 1989 to 2024, for the 8 countries in the paper.
-data <- read.csv(paste0(url, "hydropower_conflict.csv"))
+data <- read.csv("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/hydropower_conflict.csv")
 
 # 2. The dams: one row per large dam (75 MW or more) in those
 #    cells, from the Global Hydropower Tracker.
-dams <- read.csv(paste0(url, "dams.csv"))
+dams <- read.csv("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/dams.csv")
 
 # No internet? If you downloaded the data folder, use these instead:
 # data <- read.csv("data/hydropower_conflict.csv")
