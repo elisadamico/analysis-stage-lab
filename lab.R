@@ -293,9 +293,7 @@ View(my_results)
 #     "treatment" is a cell's first flood, storm or other climate
 #     disaster in EM-DAT, for example:
 #       explore("Philippines", treatment = "first_disaster")
-#       run_did("Philippines", treatment = "first_disaster", first_year = 1990, last_year = 2021)
-#     (1990 to 2021 keeps about ten years before the first mapped
-#     disasters and one year after the last.)
+#       run_did("Philippines", treatment = "first_disaster")
 #     Careful: EM-DAT only gives map coordinates for about one event in
 #     four, and only for 2001-2020. So some "never treated" cells were
 #     probably hit too. What does that do to the comparison? Would you
