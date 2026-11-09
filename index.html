@@ -205,7 +205,7 @@ function syncHL() { hl.innerHTML = highlight(ed.value); hl.scrollTop = ed.scroll
 ed.addEventListener("input", syncHL);
 ed.addEventListener("scroll", () => { hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; $("ln").scrollTop = ed.scrollTop; });
 ["keyup", "click", "select"].forEach(ev => ed.addEventListener(ev, syncLN));
-const KEY = "analysis-stage-lab-gep-v9";
+const KEY = "analysis-stage-lab-gep-v10";
 let original = "", webR, busy = false;
 
 function print(text, cls) {

@@ -24,8 +24,15 @@
 #   start, so R treats your answer as a note. Download your script
 #   at the end to keep your answers.
 #
+#   <- saves a result under a name, for example: first_dam <- ...
+#   Saving prints nothing, so it can look as if nothing happened.
+#   To see what you saved, run its name, or View() it.
+#
 #   %>% is the "pipe". Read it as "and then": take the data, and
 #   then filter it, and then count it...
+#
+#   A command can run over several lines. Put your cursor on its
+#   FIRST line and press Ctrl/Cmd + Enter: the whole command runs.
 #
 # Words you will see
 #   treated / treatment   a cell that gets a dam, from that year on
@@ -121,10 +128,16 @@ first_dam <- dams %>%
   ungroup() %>%
   select(hex_id, first_treated = start_year)   # keep and rename
 
+# That saved a new table called first_dam (nothing prints). Look at it:
+View(first_dam)        # one row per cell: the year of its first dam
+
 data <- data %>%
   left_join(first_dam, by = "hex_id") %>%      # merge back onto the panel
   mutate(first_treated = coalesce(first_treated, 0))   # cells with no dam are
                                                         # blank (NA): make them 0
+
+# data now has a new column, first_treated. Look for it:
+View(data)
 
 # How many cells in each country ever get a dam?
 data %>%
