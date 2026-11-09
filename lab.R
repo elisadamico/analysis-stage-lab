@@ -229,6 +229,9 @@ explore("Colombia")
 # Now explore differently. Change ONE thing at a time:
 #   the country:  Philippines, Venezuela, Sudan, Myanmar, Pakistan,
 #                 Ethiopia, Mali, Colombia
+#   Type names EXACTLY as written here, with a capital letter and
+#   inside quotes: "Mali" works, "mali" and Mali do not. The same
+#   goes for outcomes: "total_deaths", all lower case.
 explore("Sudan")
 #   the outcome:  "conflict_events", "civilian_deaths", "total_deaths"
 explore("Sudan", outcome = "total_deaths")
@@ -257,7 +260,8 @@ explore("Philippines", treatment = "first_disaster")
 # "Mali"), then run EVERY line from my_country down to save_run
 # again. Running only the line you edited is not enough. Tip: put
 # your cursor anywhere in this step and click "Run this step".
-my_country      <- "Colombia"         # any of the 8 countries
+my_country      <- "Colombia"         # any of the 8 countries, spelled exactly
+                                      # as in Step 3, capital first, in quotes
 my_outcome      <- "conflict_events"  # "conflict_events", "civilian_deaths", "total_deaths"
 my_control      <- "notyettreated"    # "notyettreated" or "nevertreated"
 my_anticipation <- 1                  # 0 = no early effects, 1 = from a year before

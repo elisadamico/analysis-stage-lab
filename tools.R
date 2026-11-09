@@ -9,7 +9,23 @@ library(ggplot2)
 # explore() shows you a country before you estimate anything:
 # how many cells get a dam, when, and what conflict looked like
 # over time in cells that get a dam versus cells that never do.
+check_names <- function(country_name, outcome, treatment) {
+  if (!exists("data", envir = globalenv()) || !is.data.frame(data))
+    stop("The data are not loaded yet. Run the read.csv() lines near the top first.", call. = FALSE)
+  if (!treatment %in% names(data))
+    stop(sprintf('data has no column called "%s". %s', treatment,
+                 if (treatment == "first_treated") "Run Step 1 (Build the treatment) first."
+                 else 'Use treatment = "first_treated" or treatment = "first_disaster".'), call. = FALSE)
+  if (!country_name %in% data$country)
+    stop(sprintf('There is no country called "%s". Check the spelling and the capital letter. Choose one of: %s',
+                 country_name, paste(sort(unique(data$country)), collapse = ", ")), call. = FALSE)
+  if (!outcome %in% c("conflict_events", "civilian_deaths", "total_deaths"))
+    stop(sprintf('There is no outcome called "%s". Choose one of: "conflict_events", "civilian_deaths", "total_deaths"',
+                 outcome), call. = FALSE)
+}
+
 explore <- function(country_name, outcome = "conflict_events", treatment = "first_treated") {
+  check_names(country_name, outcome, treatment)
   x <- data %>%
     filter(country == country_name) %>%
     mutate(first_treated = as.numeric(.data[[treatment]]))   # did needs numbers
@@ -75,6 +91,7 @@ save_run <- function(event_study) {
 run_did <- function(country_name, outcome = "conflict_events", control = "notyettreated",
                     anticipation = 1, first_year = 1989, last_year = 2024, plot = TRUE,
                     treatment = "first_treated") {
+  check_names(country_name, outcome, treatment)
   x <- data %>%
     filter(country == country_name, year >= first_year, year <= last_year) %>%
     mutate(first_treated = as.numeric(.data[[treatment]]))   # did needs numbers
