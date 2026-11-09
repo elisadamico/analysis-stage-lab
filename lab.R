@@ -283,31 +283,17 @@ View(my_results)
 # Not every thesis has one. Normative or theoretical projects may not,
 # and that is fine: then say what your analysis DOES rest on.
 #
-# Which kind of DiD would fit? A quick guide:
-#   - Different units treated at DIFFERENT times (dams, agreements
-#     signed in different years) -> staggered DiD, like this lab
-#     (Callaway and Sant'Anna, the did package).
-#   - EVERYONE treated at the SAME time (one election, one global
-#     shock) -> no "not yet treated" group exists. You need units that
-#     are more and less exposed, and a classic 2x2 DiD or event study.
-#   - Treatment switches ON and OFF (a policy reversed, then restored)
-#     -> possible, but harder. Each switch needs its own comparison.
-#   - Nothing like a treatment -> DiD is not the tool. That is fine.
-#
 #  5a. Is there anything in your project that could act as a
 #      treatment? What is the unit, and when does it happen?
 #      ANSWER: 
 #  5b. Who would be the comparison group? Why are they comparable?
 #      ANSWER: 
-#  5c. Could your question use a staggered DiD (Callaway and
-#      Sant'Anna)? Why or why not? If not, what would fit instead?
-#      ANSWER: 
-#  5d. What would "parallel trends" mean in your case, and what
+#  5c. What would "parallel trends" mean in your case, and what
 #      could break it?
 #      ANSWER: 
-#  5e. If your project has no treatment: what is your single most
+#  5d. If your project has no treatment: what is your single most
 #      important analysis choice, and what alternative would a
 #      careful reader suggest?
 #      ANSWER: 
-#  5f. What result or evidence would make you change your conclusion?
+#  5e. What result or evidence would make you change your conclusion?
 #      ANSWER: 
