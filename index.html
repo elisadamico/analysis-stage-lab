@@ -318,7 +318,7 @@ async function writeFile(path, url) {
 }
 (async () => {
   try {
-    original = await (await fetch("lab.R")).text();
+    original = await (await fetch("lab.R", { cache: "no-cache" })).text();
     let kept = null; try { kept = localStorage.getItem(KEY); } catch (e) {}
     ed.value = kept || original; if (kept) $("saved").textContent = "Restored your saved script";
     syncHL();
