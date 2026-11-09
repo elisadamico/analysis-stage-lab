@@ -8,6 +8,8 @@ The lab uses the replication data from D'Amico, "Difference-in-Differences Estim
 
 ## Running it in RStudio or Posit Cloud instead
 
+To run R on your own computer, install [R](https://cran.r-project.org/) first, then [RStudio Desktop](https://posit.co/download/rstudio-desktop/). Both are free. [Posit Cloud](https://posit.cloud/) runs RStudio in a browser.
+
 1. Download `lab.R` (or use **Download script** in the browser lab to keep your answers). It reads the data from this repository, so you only need an internet connection. In Posit Cloud you can also choose **New Project → New Project from Git Repository** and paste this page's address.
 2. Install the packages once. The lab needs version 2.3.0 of `did`, because newer versions refuse this panel (some grid-cell years appear twice):
    ```r

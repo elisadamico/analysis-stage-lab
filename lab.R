@@ -410,6 +410,14 @@ View(my_results)
 # =============================================================
 # AFTER CLASS: using this on your own data
 # =============================================================
+# To run R on your own computer, install both (free):
+#   R:        https://cran.r-project.org/
+#   RStudio:  https://posit.co/download/rstudio-desktop/
+# Install R first, then RStudio. Or use Posit Cloud in a browser:
+#   https://posit.cloud/
+# Then install the packages once:
+#   install.packages(c("did", "dplyr", "ggplot2"))
+#
 # If your thesis has a staggered treatment, this is all you need.
 # Your data should have ONE row per unit per year, a numeric outcome,
 # and a 0/1 column that is 1 from the year the treatment starts.

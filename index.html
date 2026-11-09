@@ -100,7 +100,7 @@
   <p class="sub">Real R, running in your browser, with no account or install. It works like RStudio: the script is on the left, and what R prints appears on the right.</p>
   <details class="guide" open>
     <summary>How this page works</summary>
-    <p class="order"><b>Run the script in order, from the top.</b> R only knows what you have already run. Load the libraries and the data before Step 0, and run each step before the next. If you see <code>could not find function</code> or <code>object not found</code>, a line above has not been run yet.</p>
+    <p class="order"><b>Run the script in order, from the top.</b> R only knows what you have already run. Load the libraries and the data before Step 0, and run each step before the next. If you see <code>could not find function</code>, <code>object not found</code>, <code>NULL</code> where you expected data, or <code>...applied to an object of class "function"</code>, a line above has not been run yet (often the libraries or the data).</p>
     <dl>
       <dt>Run line ▸</dt><dd>Runs the line your cursor is on, then moves to the next one. Shortcut <kbd>Ctrl</kbd>+<kbd>Enter</kbd> (Windows) or <kbd>Cmd</kbd>+<kbd>Enter</kbd> (Mac). A command that spans several lines runs as a whole. Highlight several lines to run just those.</dd>
       <dt>Run this step</dt><dd>Runs the whole step your cursor is in, from its <code># STEP</code> heading to the next one.</dd>
@@ -113,7 +113,7 @@
       <dt>Plots and Data</dt><dd>Plots appear in the bottom-right pane, newest first. The Data tab shows any data frame you have made. Pick it from the dropdown.</dd>
       <dt>Resizing</dt><dd>Drag the gaps between panes. Double-click a gap to reset it.</dd>
     </dl>
-    <p class="note">Your script is saved in this browser as you type, but only on this computer. Click the heading above to hide this guide.</p>
+    <p class="note">Your script is saved in this browser as you type, but only on this computer. Want R on your own computer? Install <a href="https://cran.r-project.org/" target="_blank" rel="noopener">R</a> first, then <a href="https://posit.co/download/rstudio-desktop/" target="_blank" rel="noopener">RStudio Desktop</a> (both free), or use <a href="https://posit.cloud/" target="_blank" rel="noopener">Posit Cloud</a> in a browser. Click the heading above to hide this guide.</p>
   </details>
 </header>
 
