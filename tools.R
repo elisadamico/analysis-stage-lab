@@ -28,15 +28,23 @@ explore <- function(country_name, outcome = "conflict_events", treatment = "firs
     cat(sprintf("Note: %d of these cells were treated before the data start, so the analysis can only use %d.\n",
                 early, n_treated - early))
   avg <- x %>%
-    mutate(group = if_else(first_treated > 0, "treated", "never treated")) %>%
+    filter(year <= 2023) %>%                       # conflict data end in 2023
+    mutate(group = if_else(first_treated > 0, paste("cells that ever get a", what),
+                           paste("cells that never get a", what))) %>%
     group_by(year, group) %>%
     summarise(average = mean(.data[[outcome]]), .groups = "drop")
+  in_range <- yrs$first_treated[yrs$first_treated >= min(x$year)]
+  cols <- setNames(c("#00b5c8", "#e0559a"),
+                   c(paste("cells that ever get a", what), paste("cells that never get a", what)))
   print(ggplot(avg, aes(year, average, colour = group)) + geom_line(linewidth = 1) +
-          geom_vline(xintercept = yrs$first_treated, linetype = "dotted", colour = "grey50") +
-          scale_colour_manual(values = c("treated" = "#00b5c8", "never treated" = "#e0559a")) +
-          labs(title = paste0(country_name, " - raw averages (dotted lines = years of first ", what, ")"),
-               x = NULL, y = paste("average", outcome), colour = NULL) +
-          theme_minimal() + theme(legend.position = "bottom"))
+          geom_vline(xintercept = in_range, linetype = "dotted", colour = "grey50") +
+          scale_colour_manual(values = cols) +
+          labs(title = paste0(country_name, ": raw averages, ", gsub("_", " ", outcome)),
+               subtitle = paste0("Dotted lines: years a cell got its first ", what,
+                                 if (any(yrs$first_treated < min(x$year))) paste0(" (years before ", min(x$year), " not shown)") else "",
+                                 ". Conflict data end in 2023."),
+               x = NULL, y = paste("average", gsub("_", " ", outcome), "per cell"), colour = NULL) +
+          theme_minimal() + theme(legend.position = "bottom", plot.subtitle = element_text(size = 9, colour = "grey40")))
   invisible(x)
 }
 
