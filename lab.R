@@ -4,7 +4,7 @@
 # =============================================================
 # Based on D'Amico, "Difference-in-Differences Estimation: A
 # Quasi-Experimental Approach to Sustainable Development
-# Interventions", Global Environmental Politics.
+# Interventions", Global Environmental Politics (2026).
 #
 # Question: what happens to conflict in places that get a large
 # hydropower dam (75 MW or more)?

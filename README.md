@@ -4,7 +4,9 @@ Lab for the POL30860 Advanced Seminar in Politics, University College Dublin (We
 
 **Run it in your browser, no install or account needed:** [www.elisadamico.net/analysis-stage-lab](https://www.elisadamico.net/analysis-stage-lab/)
 
-The lab uses the replication data from D'Amico, "Difference-in-Differences Estimation: A Quasi-Experimental Approach to Sustainable Development Interventions", *Global Environmental Politics*. It asks what happens to conflict in places that get a large hydropower dam, using the Callaway and Sant'Anna estimator from the paper.
+The lab uses the replication data from D'Amico, "Difference-in-Differences Estimation: A Quasi-Experimental Approach to Sustainable Development Interventions", *Global Environmental Politics* (2026). It asks what happens to conflict in places that get a large hydropower dam, using the Callaway and Sant'Anna estimator from the paper.
+
+**Slides:** [analysis_stage_slides.pdf](slides/analysis_stage_slides.pdf)
 
 ## Running it in RStudio or Posit Cloud instead
 
@@ -27,6 +29,7 @@ To run R on your own computer, install [R](https://cran.r-project.org/) first, t
 | `tools.R` | Small helper functions the lab loads with `source()`: `explore()`, `run_did()`, `save_run()` |
 | `data/hydropower_conflict.csv` | One row per grid cell per year, 1989–2024, for the 8 countries in the paper |
 | `data/dams.csv` | One row per large dam (75 MW or more) in those grid cells, with status and start year. Step 1 builds the treatment from it |
+| `slides/analysis_stage_slides.pdf` | The seminar slides |
 | `index.html` | The in-browser version (R runs in your browser through webR) |
 | `stub/` | A small stand-in for the `bigmemory` package, which has no browser build and is not used by this lab |
 
