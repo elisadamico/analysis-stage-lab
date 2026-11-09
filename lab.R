@@ -28,7 +28,9 @@ library(ggplot2)   # for plots
 # -------------------------------------------------------------
 # One row per hexagonal grid cell (about 140 km across) per year,
 # 1989 to 2024, for the 8 countries analysed in the paper.
-data <- read.csv("data/hydropower_conflict.csv")
+# This reads the data straight from GitHub, so the script works
+# anywhere with an internet connection (here, Posit Cloud, RStudio).
+data <- read.csv("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/hydropower_conflict.csv")
 
 # The did package needs the treatment years stored as decimal
 # numbers, not whole-number integers. These two lines convert them.
