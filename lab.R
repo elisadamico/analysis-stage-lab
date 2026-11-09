@@ -103,8 +103,7 @@ first_dam <- dams %>%
 
 data <- data %>%
   left_join(first_dam, by = "hex_id") %>%      # merge back onto the panel
-  mutate(first_treated = coalesce(first_treated, 0L),   # no dam = 0
-         first_treated = as.numeric(first_treated))     # did needs numbers
+  mutate(first_treated = coalesce(first_treated, 0))   # no dam = 0
 
 # How many cells in each country ever get a dam?
 data %>%
@@ -435,7 +434,7 @@ View(my_results)
 #   select(UNIT, first_treated = YEAR)
 # mydata <- mydata %>%
 #   left_join(first, by = "UNIT") %>%
-#   mutate(first_treated = as.numeric(coalesce(first_treated, 0L)))
+#   mutate(first_treated = coalesce(first_treated, 0))
 #
 # 2. Estimate (the same model as Step 2):
 # gt <- att_gt(yname = "OUTCOME", tname = "YEAR", idname = "UNIT",
