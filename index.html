@@ -190,7 +190,7 @@ function highlight(code) {
 function syncHL() { hl.innerHTML = highlight(ed.value); hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; }
 ed.addEventListener("input", syncHL);
 ed.addEventListener("scroll", () => { hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; });
-const KEY = "analysis-stage-lab-gep-v5";
+const KEY = "analysis-stage-lab-gep-v6";
 let original = "", webR, busy = false;
 
 function print(text, cls) {
