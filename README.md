@@ -24,6 +24,7 @@ To run R on your own computer, install [R](https://cran.r-project.org/) first, t
 | File | What it is |
 |---|---|
 | `lab.R` | The lab script, in steps, with questions |
+| `tools.R` | Small helper functions the lab loads with `source()`: `explore()`, `run_did()`, `save_run()` |
 | `data/hydropower_conflict.csv` | One row per grid cell per year, 1989–2024, for the 8 countries in the paper |
 | `data/dams.csv` | One row per large dam (75 MW or more) in those grid cells, with status and start year. Step 1 builds the treatment from it |
 | `index.html` | The in-browser version (R runs in your browser through webR) |
