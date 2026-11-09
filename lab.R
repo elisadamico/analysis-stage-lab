@@ -31,6 +31,8 @@ library(ggplot2)   # for plots
 # This reads the data straight from GitHub, so the script works
 # anywhere with an internet connection (here, Posit Cloud, RStudio).
 data <- read.csv("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/data/hydropower_conflict.csv")
+# No internet? If you downloaded the data folder, use this line instead:
+# data <- read.csv("data/hydropower_conflict.csv")
 
 # The did package needs the treatment years stored as decimal
 # numbers, not whole-number integers. These two lines convert them.
