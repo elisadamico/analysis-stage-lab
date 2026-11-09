@@ -87,6 +87,9 @@ data %>%
 # =============================================================
 # STEP 1. Build the treatment
 # =============================================================
+# The dams data includes each dam's status. What statuses are there?
+dams %>% count(status)
+
 # The estimator needs ONE number per cell: the year it was first
 # treated, with 0 for cells that never get a dam. The dams data
 # has one row per dam, and some cells have several. So:
@@ -113,8 +116,7 @@ data %>%
 #  1a. Which countries have very few treated cells? Why might that
 #      worry you before you run anything?
 #      ANSWER:
-#  1b. Look at the status column in dams (count(dams, status)).
-#      Should a dam that is only "announced" or "under construction"
+#  1b. Look at the statuses you counted above. Should a dam that is only "announced" or "under construction"
 #      count as treated? Look at their start years too. What would
 #      change if you removed the # in front of the filter line and
 #      ran Step 1 again?

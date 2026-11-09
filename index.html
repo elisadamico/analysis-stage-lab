@@ -26,13 +26,19 @@
   #saved { font-size: 12px; color: var(--muted); }
   #status { margin-left: auto; font-size: 13px; color: var(--pink); }
   #status.ready { color: var(--cyan); }
-  main { flex: 1; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 12px; padding: 0 20px 16px; min-height: 0; }
-  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } }
+  main { flex: 1; display: grid; grid-template-columns: minmax(0, var(--left, 1.1fr)) 12px minmax(0, 1fr); padding: 0 20px 16px; min-height: 0; }
+  .gutter { cursor: col-resize; display: flex; justify-content: center; }
+  .gutter::before { content: ""; width: 2px; border-radius: 2px; background: transparent; transition: background .15s; }
+  .gutter:hover::before, .gutter.drag::before { background: var(--cyan); }
+  .gutter.row { cursor: row-resize; flex-direction: column; align-items: stretch; }
+  .gutter.row::before { width: auto; height: 2px; }
+  body.dragging { user-select: none; }
+  @media (max-width: 900px) { main { grid-template-columns: minmax(0, 1fr); } main > .gutter { display: none; } }
   .pane { background: var(--panel); border-radius: 6px; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
   .pane h2 { margin: 0; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--muted);
              border-bottom: 1px solid var(--rule); letter-spacing: .04em; text-transform: uppercase; }
   .pane h2 span { color: var(--cyan); text-transform: none; letter-spacing: 0; font-weight: 400; }
-  .edwrap { flex: 1; position: relative; min-height: 420px; background: #0b0b0b; overflow: hidden; }
+  .edwrap { flex: 1; position: relative; min-height: 300px; background: #0b0b0b; overflow: hidden; }
   #editor, #hl { position: absolute; inset: 0; margin: 0; padding: 12px; border: 0; width: 100%; height: 100%;
                  font: 13px/1.5 Menlo, Consolas, "Courier New", monospace; tab-size: 2; white-space: pre;
                  overflow: auto; letter-spacing: 0; word-spacing: 0; }
@@ -47,18 +53,22 @@
   .tk-fn  { color: #00ffff; }
   .tk-arg { color: #9fe8f0; }
   .tk-op  { color: #b0b0b0; }
-  .right { display: grid; grid-template-rows: minmax(0, 1.2fr) minmax(0, 1fr); gap: 12px; min-height: 0; }
+  .right { display: grid; grid-template-rows: minmax(0, var(--top, 1.2fr)) 12px minmax(0, 1fr); min-height: 0; }
   #console { flex: 1; overflow: auto; margin: 0; padding: 10px 12px; font: 12.5px/1.45 Menlo, Consolas, monospace;
-             white-space: pre-wrap; min-height: 220px; }
+             white-space: pre-wrap; min-height: 80px; }
+  #cmdline { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-top: 1px solid var(--rule); }
+  #cmdline span { color: var(--cyan); font: 13px Menlo, Consolas, monospace; }
+  #cmd { flex: 1; background: transparent; border: 0; outline: none; color: var(--ink); font: 12.5px Menlo, Consolas, monospace; }
+  #cmd::placeholder { color: #555; }
   #console .in { color: #e8e8e8; } #console .prompt { color: #7a7a7a; } #console .err { color: var(--pink); } #console .note { color: var(--muted); }
   .tabs { display: flex; border-bottom: 1px solid var(--rule); }
   .tabs button { border: 0; border-radius: 0; background: transparent; color: var(--muted); padding: 8px 14px;
                  font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
   .tabs button.on { color: var(--cyan); box-shadow: inset 0 -2px 0 var(--cyan); }
-  #plots { flex: 1; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; min-height: 180px; }
+  #plots { flex: 1; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; min-height: 120px; }
   #plots .empty { color: var(--muted); font-size: 13px; }
   .plot { display: flex; flex-direction: column; gap: 4px; }
-  .plot canvas { background: #fff; border-radius: 4px; max-width: 100%; }
+  .plot canvas { background: #fff; border-radius: 4px; width: 100%; height: auto; }
   .plot a { font-size: 12px; }
   #dataPane { flex: 1; display: none; flex-direction: column; min-height: 180px; overflow: hidden; }
   #dataBar { display: flex; gap: 8px; align-items: center; padding: 8px 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
@@ -100,8 +110,11 @@
     <h2>Script <span>lab.R</span></h2>
     <div class="edwrap"><pre id="hl" aria-hidden="true"></pre><textarea id="editor" spellcheck="false" aria-label="R script"></textarea></div>
   </section>
+  <div class="gutter" id="gutCol" title="Drag to resize"></div>
   <div class="right">
-    <section class="pane"><h2>Console</h2><pre id="console"></pre></section>
+    <section class="pane"><h2>Console</h2><pre id="console"></pre>
+      <div id="cmdline"><span>&gt;</span><input id="cmd" spellcheck="false" autocomplete="off" aria-label="Type R code and press Enter" placeholder="Type R code here and press Enter"></div></section>
+    <div class="gutter row" id="gutRow" title="Drag to resize"></div>
     <section class="pane">
       <div class="tabs"><button id="tabPlots" class="on">Plots</button><button id="tabData">Data</button></div>
       <div id="plots"><span class="empty">Plots appear here.</span></div>
@@ -152,7 +165,7 @@ function highlight(code) {
 function syncHL() { hl.innerHTML = highlight(ed.value); hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; }
 ed.addEventListener("input", syncHL);
 ed.addEventListener("scroll", () => { hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; });
-const KEY = "analysis-stage-lab-gep-v4";
+const KEY = "analysis-stage-lab-gep-v5";
 let original = "", webR, busy = false;
 
 function print(text, cls) {
@@ -198,7 +211,7 @@ async function runOne(code) {
   const shelter = await new webR.Shelter();
   try {
     const res = await shelter.captureR(code, { withAutoprint: true, captureStreams: true, captureConditions: false,
-                                               captureGraphics: { width: 620, height: 400 } });
+                                               captureGraphics: { width: 900, height: 560 } });
     res.output.forEach(o => print(o.data, o.type === "stderr" ? "err" : ""));
     if (res.images.length) {
       plots.querySelector(".empty")?.remove(); showTab("plots");
@@ -245,6 +258,45 @@ async function runStep() {
   let b = here + 1; while (b < L.length && !head(L[b])) b++;
   setBusy(true); try { await run(L.slice(a, b).join("\n")); } finally { setBusy(false); }
 }
+
+// ---------- typing in the console ----------
+const hist = []; let hpos = 0;
+$("cmd").addEventListener("keydown", async e => {
+  const box = $("cmd");
+  if (e.key === "Enter") {
+    e.preventDefault(); const code = box.value; if (!code.trim() || busy) return;
+    hist.push(code); hpos = hist.length; box.value = "";
+    setBusy(true); try { await run(code); } finally { setBusy(false); box.focus(); }
+  } else if (e.key === "ArrowUp" && hist.length) {
+    e.preventDefault(); hpos = Math.max(0, hpos - 1); box.value = hist[hpos];
+  } else if (e.key === "ArrowDown" && hist.length) {
+    e.preventDefault(); hpos = Math.min(hist.length, hpos + 1); box.value = hist[hpos] ?? "";
+  }
+});
+
+// ---------- resizable panes ----------
+function dragger(id, prop, axis, box) {
+  const g = $(id);
+  g.addEventListener("pointerdown", e => {
+    e.preventDefault(); g.setPointerCapture(e.pointerId); g.classList.add("drag"); document.body.classList.add("dragging");
+    const move = ev => {
+      const r = box().getBoundingClientRect();
+      const f = axis === "x" ? (ev.clientX - r.left) / r.width : (ev.clientY - r.top) / r.height;
+      const v = Math.min(0.85, Math.max(0.15, f));
+      const val = (v / (1 - v)).toFixed(3) + "fr";      // left/top share relative to the other pane
+      document.documentElement.style.setProperty(prop, val);
+      try { localStorage.setItem("lab-" + prop, val); } catch (err) {}
+    };
+    const up = () => { g.classList.remove("drag"); document.body.classList.remove("dragging");
+      g.removeEventListener("pointermove", move); g.removeEventListener("pointerup", up); };
+    g.addEventListener("pointermove", move); g.addEventListener("pointerup", up);
+  });
+  g.addEventListener("dblclick", () => { document.documentElement.style.removeProperty(prop);
+    try { localStorage.removeItem("lab-" + prop); } catch (err) {} });
+  try { const v = localStorage.getItem("lab-" + prop); if (v) document.documentElement.style.setProperty(prop, v); } catch (err) {}
+}
+dragger("gutCol", "--left", "x", () => document.querySelector("main"));
+dragger("gutRow", "--top", "y", () => document.querySelector(".right"));
 
 // ---------- data viewer ----------
 const MAXROWS = 500;
