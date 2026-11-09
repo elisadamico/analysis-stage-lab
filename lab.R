@@ -115,10 +115,10 @@ data %>%
 #  1a. Which countries have very few treated cells? Why might that
 #      worry you before you run anything?
 #      ANSWER:
-#  1b. Look at the statuses you counted above. Should a dam that is only "announced" or "under construction"
-#      count as treated? Look at their start years too. What would
-#      change if you removed the # in front of the filter line and
-#      ran Step 1 again?
+#  1b. Look at the statuses you counted above. Should a dam that
+#      is only "announced" or "under construction" count as treated?
+#      Look at their start years too. What would change if you
+#      removed the # in front of the filter line and ran Step 1 again?
 #      ANSWER:
 
 
@@ -294,6 +294,8 @@ View(my_results)
 #     disaster in EM-DAT, for example:
 #       explore("Philippines", treatment = "first_disaster")
 #       run_did("Philippines", treatment = "first_disaster", first_year = 1990, last_year = 2021)
+#     (1990 to 2021 keeps about ten years before the first mapped
+#     disasters and one year after the last.)
 #     Careful: EM-DAT only gives map coordinates for about one event in
 #     four, and only for 2001-2020. So some "never treated" cells were
 #     probably hit too. What does that do to the comparison? Would you
@@ -367,8 +369,10 @@ View(my_results)
 #   RStudio:  https://posit.co/download/rstudio-desktop/
 # Install R first, then RStudio. Or use Posit Cloud in a browser:
 #   https://posit.cloud/
-# Then install the packages once:
+# For YOUR OWN data, install the packages once:
 #   install.packages(c("did", "dplyr", "ggplot2"))
+# (To rerun THIS lab in RStudio you need an older version of did,
+# because of the repeated cell-years. The GitHub page explains how.)
 #
 # If your thesis has a staggered treatment, this is all you need.
 # Your data should have ONE row per unit per year, a numeric outcome,

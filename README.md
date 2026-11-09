@@ -35,6 +35,6 @@ To run R on your own computer, install [R](https://cran.r-project.org/) first, t
 - Paper replication data: Harvard Dataverse, [doi:10.7910/DVN/FGCPNU](https://doi.org/10.7910/DVN/FGCPNU)
 - Conflict: [UCDP Georeferenced Event Dataset](https://ucdp.uu.se/), Uppsala Conflict Data Program
 - Hydropower: [Global Hydropower Tracker](https://globalenergymonitor.org/projects/global-hydropower-tracker/), Global Energy Monitor
-- `first_disaster` (Challenge E only): year a grid cell was first hit by a climate disaster with coordinates in [EM-DAT](https://www.emdat.be/) (CRED, UCLouvain), 2001–2020
+- `first_disaster` (an alternative treatment, Step 3 and Challenge E): year a grid cell was first hit by a climate disaster with coordinates in [EM-DAT](https://www.emdat.be/) (CRED, UCLouvain), 2001–2020
 - Estimator: Callaway and Sant'Anna (2021), R package [did](https://bcallaway11.github.io/did/)
 - R in the browser: [webR](https://docs.r-wasm.org/webr/latest/)
