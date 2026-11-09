@@ -176,9 +176,6 @@ source("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/to
 #   Philippines -1.007   Venezuela -2.509   Sudan +7.324   Myanmar +2.413
 #   Pakistan   -19.592   Ethiopia +12.574   Mali  -1.981   Colombia -4.806
 # (The paper uses 1990 onwards for Sudan and years up to 2020 for Myanmar.)
-# Speed in the browser: Philippines, Venezuela and Mali take seconds,
-# Colombia about half a minute, Myanmar, Pakistan and Ethiopia up to
-# a minute.
 
 
 # =============================================================
