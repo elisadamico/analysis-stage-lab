@@ -243,9 +243,9 @@ async function run(code) {
   for (const cmd of await commands(code)) {
     await runOne(cmd);
     const v = cmd.match(/^\s*View\(\s*([A-Za-z.][A-Za-z0-9._]*)/);
-    if (v) { await refreshData(v[1]); showTab("data"); }
+    if (v) { try { await refreshData(v[1]); showTab("data"); } catch (e) { print("(Could not show " + v[1] + " in the Data tab.)", "note"); } }
   }
-  await refreshData();
+  try { await refreshData(); } catch (e) {}
 }
 async function runOne(code) {
   code.replace(/\n+$/, "").split("\n").forEach((l, i) => {
@@ -371,7 +371,7 @@ async function refreshData(pick) {
 async function drawTable(name) {
   if (!name) return;
   await webR.objs.globalEnv.bind(".view_name", name);
-  const v = await rText(`local({ x <- get(.view_name, envir = globalenv()); h <- head(x, ${MAXROWS})
+  const v = await rText(`local({ x <- as.data.frame(get(.view_name, envir = globalenv())); h <- head(x, ${MAXROWS})
     f <- format(h, trim = TRUE); f[is.na(h)] <- "NA"
     c(paste(c("", names(h)), collapse = "\\t"), paste(rownames(h), apply(f, 1, paste, collapse = "\\t"), sep = "\\t"), as.character(nrow(x))) })`);
   const total = Number(v.pop()), [head, ...body] = v;
