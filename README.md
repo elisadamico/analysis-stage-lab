@@ -11,7 +11,7 @@ The lab uses the replication data from D'Amico, "Difference-in-Differences Estim
 1. Download `lab.R` (or use **Download script** in the browser lab to keep your answers). It reads the data from this repository, so you only need an internet connection. In Posit Cloud you can also choose **New Project → New Project from Git Repository** and paste this page's address.
 2. Install the packages once. The lab needs version 2.3.0 of `did`, because newer versions refuse this panel (some grid-cell years appear twice):
    ```r
-   install.packages(c("ggplot2", "BMisc", "DRDID", "pbapply", "fastglm", "dreamerr"))
+   install.packages(c("dplyr", "ggplot2", "BMisc", "DRDID", "pbapply", "fastglm", "dreamerr"))
    install.packages("https://cran.r-project.org/src/contrib/Archive/did/did_2.3.0.tar.gz",
                     repos = NULL, type = "source")
    ```
@@ -23,6 +23,7 @@ The lab uses the replication data from D'Amico, "Difference-in-Differences Estim
 |---|---|
 | `lab.R` | The lab script, in steps, with questions |
 | `data/hydropower_conflict.csv` | One row per grid cell per year, 1989–2024, for the 8 countries in the paper |
+| `data/dams.csv` | One row per large dam (75 MW or more) in those grid cells, with status and start year. Step 1 builds the treatment from it |
 | `index.html` | The in-browser version (R runs in your browser through webR) |
 | `stub/` | A small stand-in for the `bigmemory` package, which has no browser build and is not used by this lab |
 

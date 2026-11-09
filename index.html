@@ -149,7 +149,7 @@ function highlight(code) {
 function syncHL() { hl.innerHTML = highlight(ed.value); hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; }
 ed.addEventListener("input", syncHL);
 ed.addEventListener("scroll", () => { hl.scrollTop = ed.scrollTop; hl.scrollLeft = ed.scrollLeft; });
-const KEY = "analysis-stage-lab-gep-v3";
+const KEY = "analysis-stage-lab-gep-v4";
 let original = "", webR, busy = false;
 
 function print(text, cls) {
@@ -328,8 +328,9 @@ async function writeFile(path, url) {
     for (const f of (await (await fetch("stub/files.txt")).text()).trim().split("\n"))
       await writeFile("/home/web_user/stub/" + f, "stub/" + f);
     await webR.evalRVoid('.libPaths(c("/home/web_user/stub", .libPaths()))');
-    await webR.installPackages(["did", "ggplot2"], { quiet: true });
+    await webR.installPackages(["did", "dplyr", "ggplot2"], { quiet: true });
     await writeFile("/home/web_user/data/hydropower_conflict.csv", "data/hydropower_conflict.csv");
+    await writeFile("/home/web_user/data/dams.csv", "data/dams.csv");
     await webR.evalRVoid('View <- function(x, title) invisible(x)');
     print("R is ready. Start at the top of the script.", "note");
     setBusy(false);
