@@ -283,8 +283,8 @@ View(my_results)
 # Not every thesis has one. Normative or theoretical projects may not,
 # and that is fine: then say what your analysis DOES rest on.
 #
-#  5a. Is there anything in your project that could act as a
-#      treatment? What is the unit, and when does it happen?
+#  5a. Does your research question have a treatment? If so, what
+#      is the unit, and when does it happen?
 #      ANSWER: 
 #  5b. Who would be the comparison group? Why are they comparable?
 #      ANSWER: 
