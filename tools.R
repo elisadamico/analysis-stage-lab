@@ -28,7 +28,7 @@ explore <- function(country_name, outcome = "conflict_events", treatment = "firs
     cat(sprintf("Note: %d of these cells were treated before the data start, so the analysis can only use %d.\n",
                 early, n_treated - early))
   avg <- x %>%
-    filter(year <= 2023) %>%                       # conflict data end in 2023
+    filter(year <= 2023) %>%
     mutate(group = if_else(first_treated > 0, paste("cells that ever get a", what),
                            paste("cells that never get a", what))) %>%
     group_by(year, group) %>%
@@ -42,7 +42,7 @@ explore <- function(country_name, outcome = "conflict_events", treatment = "firs
           labs(title = paste0(country_name, ": raw averages, ", gsub("_", " ", outcome)),
                subtitle = paste0("Dotted lines: years a cell got its first ", what,
                                  if (any(yrs$first_treated < min(x$year))) paste0(" (years before ", min(x$year), " not shown)") else "",
-                                 ". Conflict data end in 2023."),
+                                 "."),
                x = NULL, y = paste("average", gsub("_", " ", outcome), "per cell"), colour = NULL) +
           theme_minimal() + theme(legend.position = "bottom", plot.subtitle = element_text(size = 9, colour = "grey40")))
   invisible(x)
