@@ -11,8 +11,10 @@
 #
 # How to use this script
 #   Run it one line at a time: Ctrl + Enter (Windows) or
-#   Cmd + Enter (Mac). After each step, answer the QUESTIONS with
-#   your partner. Type your answers after each "# ANSWER:" line.
+#   Cmd + Enter (Mac). Work in pairs for Steps 0 to 4 (one laptop
+#   between two is fine) and answer the QUESTIONS together. Step 5
+#   is about your own thesis, so do it on your own.
+#   Type your answers after each "# ANSWER:" line.
 #   Keep the # at the start, so R treats your answer as a note.
 #   Download your script at the end to keep your notes.
 # =============================================================
@@ -270,18 +272,32 @@ View(my_results)
 
 
 # =============================================================
-# STEP 5. Is there a "treatment" in your thesis?
+# STEP 5. Is there a "treatment" in your thesis? (on your own)
 # =============================================================
 # No code. A treatment is anything that happens at a point in time
 # to some units but not others: a policy, a project, an agreement,
-# a shock. Examples from projects like yours:
-#   - a university anti-violence initiative introduced at some
-#     universities but not others (unit: university; outcome:
-#     students' willingness to condemn harm to opponents)
-#   - countries signing currency swap agreements with China in
-#     different years (unit: country; outcome: FDI or trade)
+# a shock. Some examples:
+#   - US states raising the minimum wage in different years
+#     (unit: state; outcome: employment)
+#   - mobile phone coverage reaching different regions at
+#     different times (unit: region; outcome: protest)
+#   - the Brexit vote hitting all UK firms at once, but firms that
+#     export more to the EU are more exposed (unit: firm; outcome:
+#     investment)
+#   - "Is civil disobedience ever justified?" No treatment here.
 # Not every thesis has one. Normative or theoretical projects may not,
 # and that is fine: then say what your analysis DOES rest on.
+#
+# Which kind of DiD would fit? A quick guide:
+#   - Different units treated at DIFFERENT times (dams, minimum
+#     wage rises) -> staggered DiD, like this lab (Callaway and
+#     Sant'Anna, the did package).
+#   - EVERYONE treated at the SAME time (one election, one global
+#     shock) -> no "not yet treated" group exists. You need units that
+#     are more and less exposed, and a classic 2x2 DiD or event study.
+#   - Treatment switches ON and OFF (a policy reversed, then restored)
+#     -> possible, but harder. Each switch needs its own comparison.
+#   - Nothing like a treatment -> DiD is not the tool. That is fine.
 #
 #  5a. Does your research question have a treatment? If so, what
 #      is the unit, and when does it happen?
@@ -297,3 +313,39 @@ View(my_results)
 #      ANSWER: 
 #  5e. What result or evidence would make you change your conclusion?
 #      ANSWER: 
+
+
+# =============================================================
+# AFTER CLASS: using this on your own data
+# =============================================================
+# If your thesis has a staggered treatment, this is all you need.
+# Your data should have ONE row per unit per year, a numeric outcome,
+# and a 0/1 column that is 1 from the year the treatment starts.
+# Change the names in CAPITALS to your own column names.
+#
+# 1. Build "year first treated" from the 0/1 column (0 = never):
+# mydata <- read.csv("MY_FILE.csv")
+# first <- aggregate(YEAR ~ UNIT, data = mydata[mydata$TREATED == 1, ], FUN = min)
+# names(first)[2] <- "first_treated"
+# mydata <- merge(mydata, first, by = "UNIT", all.x = TRUE)
+# mydata$first_treated[is.na(mydata$first_treated)] <- 0
+# mydata[] <- lapply(mydata, function(v) if (is.integer(v)) as.numeric(v) else v)
+#
+# 2. Estimate (the same model as Step 1):
+# gt <- att_gt(yname = "OUTCOME", tname = "YEAR", idname = "UNIT",
+#              gname = "first_treated", data = mydata,
+#              control_group = "notyettreated", panel = TRUE)
+# es <- aggte(gt, type = "dynamic", na.rm = TRUE)
+# es
+# ggdid(es)
+#
+# Things to check:
+#   - UNIT must be a number. If yours is a name, make an id with
+#     mydata$UNIT_ID <- as.numeric(factor(mydata$UNIT))
+#   - Once treated, always treated: if your 0/1 column goes back to
+#     0, "first year treated" ignores that. Say so, or rethink.
+#   - Units treated in the first year of your data have no "before"
+#     period, so they are dropped (as in the Philippines).
+#   - Use panel = TRUE and the current did package. This lab uses
+#     panel = FALSE and an old version only because the paper's
+#     data repeat some cell-years.
