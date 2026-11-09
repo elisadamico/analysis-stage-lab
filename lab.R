@@ -242,13 +242,25 @@ es
 ggdid(es)
 save_run(es)                          # adds this run to my_results
 
+# ROBUSTNESS (also called SENSITIVITY) CHECKS
+# Every analysis rests on choices: which outcome, which comparison
+# group, whether effects can start early. Often more than one choice
+# is defensible. A robustness check asks: if I make a DIFFERENT
+# choice that I could also defend, does the result still hold?
+#   - Robust: the sign stays the same and the size moves a little.
+#   - Fragile: the sign flips, the size changes a lot, or the
+#     interval now includes zero.
+# A result that only holds under one exact set of choices is weak
+# evidence, even if it has an asterisk. Change ONE thing at a time,
+# so you know which choice moved it.
+#
 # Now change ONE setting above, predict, and run again. Do this at
 # least three times. Every run is saved in my_results:
 View(my_results)
 
 # QUESTIONS
-#  4a. Which of your changes moved the estimate most? Which only
-#      changed how sure we are?
+#  4a. Is your result robust or fragile? Which change moved the
+#      estimate most, and which only changed how sure we are?
 #      ANSWER:
 #  4b. Which of your choices could a careful researcher defend?
 #      Which would a reviewer push back on?
