@@ -58,7 +58,7 @@ dams <- read.csv("https://raw.githubusercontent.com/elisadamico/analysis-stage-l
 #   total_deaths     all deaths, UCDP "best" estimate
 #   first_disaster   year the cell was first hit by a climate disaster
 #                    with map coordinates in EM-DAT (0 = none recorded).
-#                    Used only in Challenge E.
+#                    An alternative treatment (Step 3, Challenge E).
 # Columns in dams:
 #   hex_id, dam_name, country, capacity_mw, status, start_year
 
@@ -167,6 +167,7 @@ source("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/to
 # No internet? Use this instead:  source("tools.R")
 #
 #   explore("Colombia")    Look at a country BEFORE estimating anything
+#                          (options: outcome = ..., treatment = ...)
 #   run_did("Colombia")    The Step 2 model in one line (for Step 5)
 #   save_run(es)           Adds a result to my_results (Step 4)
 #   View(my_results)       All your runs, side by side
@@ -200,6 +201,9 @@ explore("Colombia")
 explore("Sudan")
 #   the outcome:  "conflict_events", "civilian_deaths", "total_deaths"
 explore("Sudan", outcome = "total_deaths")
+#   the treatment: a cell's first climate disaster instead of its
+#                  first dam (more on this in Challenge E)
+explore("Philippines", treatment = "first_disaster")
 # Look at at least THREE countries before you answer.
 
 # QUESTIONS
