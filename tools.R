@@ -51,21 +51,21 @@ explore <- function(country_name, outcome = "conflict_events", treatment = "firs
 # save_run() prints a one-line summary of a result and adds it to
 # my_results, so you can compare your runs side by side.
 my_results <- data.frame()
-add_result <- function(es, country_name, outcome, treatment, control, anticipation, years) {
-  lo <- es$overall.att - 1.96 * es$overall.se
-  hi <- es$overall.att + 1.96 * es$overall.se
+add_result <- function(event_study, country_name, outcome, treatment, control, anticipation, years) {
+  lo <- event_study$overall.att - 1.96 * event_study$overall.se
+  hi <- event_study$overall.att + 1.96 * event_study$overall.se
   cat(sprintf("\n%s | %s | treatment: %s | control: %s | anticipation: %d | %s\n",
               country_name, outcome, treatment, control, anticipation, years))
   cat(sprintf("Overall ATT %+.3f  (SE %.3f, 95%% interval %+.3f to %+.3f)%s\n",
-              es$overall.att, es$overall.se, lo, hi,
+              event_study$overall.att, event_study$overall.se, lo, hi,
               if (lo > 0 | hi < 0) "  <- interval excludes zero" else ""))
   my_results <<- bind_rows(my_results, tibble(
     country = country_name, outcome, treatment, control, anticipation, years,
-    ATT = round(es$overall.att, 3), SE = round(es$overall.se, 3),
+    ATT = round(event_study$overall.att, 3), SE = round(event_study$overall.se, 3),
     excludes_zero = lo > 0 | hi < 0))
 }
-save_run <- function(es) {
-  add_result(es, my_country, my_outcome, "first_treated", my_control,
+save_run <- function(event_study) {
+  add_result(event_study, my_country, my_outcome, "first_treated", my_control,
              my_anticipation, "1989-2024")
 }
 
@@ -79,12 +79,12 @@ run_did <- function(country_name, outcome = "conflict_events", control = "notyet
     filter(country == country_name, year >= first_year, year <= last_year) %>%
     mutate(first_treated = as.numeric(.data[[treatment]]))   # did needs numbers
   set.seed(1)
-  gt <- att_gt(yname = outcome, tname = "year", idname = "hex_id", gname = "first_treated",
+  group_time <- att_gt(yname = outcome, tname = "year", idname = "hex_id", gname = "first_treated",
                data = x, control_group = control, anticipation = anticipation,
                bstrap = TRUE, panel = FALSE)
-  es <- aggte(gt, type = "dynamic", na.rm = TRUE)
-  add_result(es, country_name, outcome, treatment, control, anticipation,
+  event_study <- aggte(group_time, type = "dynamic", na.rm = TRUE)
+  add_result(event_study, country_name, outcome, treatment, control, anticipation,
              paste0(first_year, "-", last_year))
-  if (plot) print(ggdid(es) + ggtitle(paste(country_name, outcome)))
-  invisible(es)
+  if (plot) print(ggdid(event_study) + ggtitle(paste(country_name, outcome)))
+  invisible(event_study)
 }

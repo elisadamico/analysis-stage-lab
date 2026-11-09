@@ -129,7 +129,7 @@ data %>%
 ph <- data %>% filter(country == "Philippines")
 
 set.seed(1)
-gt <- att_gt(
+group_time <- att_gt(
   yname = "conflict_events",        # outcome
   tname = "year",                   # time
   idname = "hex_id",                # unit
@@ -141,9 +141,9 @@ gt <- att_gt(
   panel = FALSE
 )
 
-es <- aggte(gt, type = "dynamic", na.rm = TRUE)   # event study
-es                                                # overall ATT at the top
-ggdid(es)                                         # the event-study plot
+event_study <- aggte(group_time, type = "dynamic", na.rm = TRUE)
+event_study                # the overall ATT is at the top
+ggdid(event_study)         # the event-study plot
 
 # Published in the paper (Philippines): ATT -1.007, SE 0.185
 
@@ -169,7 +169,7 @@ source("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/to
 #   explore("Colombia")    Look at a country BEFORE estimating anything
 #                          (options: outcome = ..., treatment = ...)
 #   run_did("Colombia")    The Step 2 model in one line (for Step 5)
-#   save_run(es)           Adds a result to my_results (Step 4)
+#   save_run(event_study)  Adds a result to my_results (Step 4)
 #   View(my_results)       All your runs, side by side
 
 # Published estimates (conflict events, paper's choices):
@@ -226,7 +226,7 @@ my_anticipation <- 1                  # 0 = no early effects, 1 = from a year be
 x <- data %>% filter(country == my_country)   # keep only your country
 
 set.seed(1)
-gt <- att_gt(
+group_time <- att_gt(
   yname = my_outcome,
   tname = "year",
   idname = "hex_id",
@@ -237,10 +237,10 @@ gt <- att_gt(
   bstrap = TRUE,
   panel = FALSE
 )
-es <- aggte(gt, type = "dynamic", na.rm = TRUE)
-es
-ggdid(es)
-save_run(es)                          # adds this run to my_results
+event_study <- aggte(group_time, type = "dynamic", na.rm = TRUE)
+event_study
+ggdid(event_study)
+save_run(event_study)      # adds this run to my_results
 
 # ROBUSTNESS (also called SENSITIVITY) CHECKS
 # Every analysis rests on choices: which outcome, which comparison
@@ -392,12 +392,12 @@ View(my_results)
 #   mutate(first_treated = coalesce(first_treated, 0))
 #
 # 2. Estimate (the same model as Step 2):
-# gt <- att_gt(yname = "OUTCOME", tname = "YEAR", idname = "UNIT",
-#              gname = "first_treated", data = mydata,
-#              control_group = "notyettreated", panel = TRUE)
-# es <- aggte(gt, type = "dynamic", na.rm = TRUE)
-# es
-# ggdid(es)
+# group_time <- att_gt(yname = "OUTCOME", tname = "YEAR", idname = "UNIT",
+#                      gname = "first_treated", data = mydata,
+#                      control_group = "notyettreated", panel = TRUE)
+# event_study <- aggte(group_time, type = "dynamic", na.rm = TRUE)
+# event_study
+# ggdid(event_study)
 #
 # Things to check:
 #   - UNIT must be a number. If yours is a name, make an id with
