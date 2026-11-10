@@ -210,6 +210,12 @@ source("https://raw.githubusercontent.com/elisadamico/analysis-stage-lab/main/to
 #   Philippines -1.007   Venezuela -2.509   Sudan +7.324   Myanmar +2.413
 #   Pakistan   -19.592   Ethiopia +12.574   Mali  -1.981   Colombia -4.806
 # (The paper uses 1990 onwards for Sudan and years up to 2020 for Myanmar.)
+#
+# The paper groups the countries into three patterns, by the shape
+# of their event-study plots:
+#   Falls                    Philippines, Venezuela
+#   Rises, then returns      Sudan, Myanmar
+#   Disruption, then falls   Pakistan, Ethiopia, Mali, Colombia
 
 
 # =============================================================
@@ -310,6 +316,11 @@ View(my_results)
 #      ANSWER:
 #  4c. If you could report only ONE of your results, which one,
 #      and what would go in an appendix?
+#      ANSWER:
+#  4d. Interpret it. Which of the paper's three patterns does your
+#      country's plot look like? Suggest one reason conflict might
+#      have changed that way there, and one piece of evidence (a
+#      report, interviews, news, other data) that could check it.
 #      ANSWER:
 
 
